@@ -9,6 +9,9 @@ import (
 	"github.com/sk25469/momoney-backend-assignment/utils"
 )
 
+var cachingEnabledForTodos = true
+var cachingEnabledForPosts = true
+
 func GetTodos(ctx *fiber.Ctx) error {
 	idParam := ctx.Params("id")
 	todoId, err := strconv.Atoi(idParam)
@@ -18,12 +21,24 @@ func GetTodos(ctx *fiber.Ctx) error {
 	}
 	log.Printf("Successfully parsed id: [%v]", todoId)
 
-	response, err := middleware.InitMiddleWare(todoId, utils.Todo)
+	response, err := middleware.InitMiddleWare(todoId, utils.Todo, cachingEnabledForTodos)
 	if err != nil {
 		log.Printf("Error occured in middleware: [%v]", err)
 		return ctx.Status(500).SendString(err.Error())
 	}
 	return ctx.Status(200).JSON(response)
+}
+
+func ToggleCachingForTodos(ctx *fiber.Ctx) error {
+	flagParam := ctx.Params("flag")
+	log.Printf("Successfully parsed flag: [%v]", flagParam)
+	if flagParam == "true" {
+		cachingEnabledForTodos = true
+		return ctx.Status(200).JSON("Caching enabled for todos")
+	} else {
+		cachingEnabledForTodos = false
+		return ctx.Status(200).JSON("Caching disabled for todos")
+	}
 }
 
 func GetPosts(ctx *fiber.Ctx) error {
@@ -34,10 +49,23 @@ func GetPosts(ctx *fiber.Ctx) error {
 		return ctx.Status(500).SendString(err.Error())
 	}
 	log.Printf("Successfully parsed id: [%v]", postId)
-	response, err := middleware.InitMiddleWare(postId, utils.Post)
+	response, err := middleware.InitMiddleWare(postId, utils.Post, cachingEnabledForPosts)
 	if err != nil {
 		log.Printf("Error occured in middleware: [%v]", err)
 		return ctx.Status(500).SendString(err.Error())
 	}
 	return ctx.Status(200).JSON(response)
+}
+
+func ToggleCachingForPosts(ctx *fiber.Ctx) error {
+	flagParam := ctx.Params("flag")
+	if flagParam == "true" {
+		cachingEnabledForPosts = true
+		return ctx.Status(200).JSON("Caching enabled for posts")
+	} else {
+		cachingEnabledForPosts = false
+		return ctx.Status(200).JSON("Caching disabled for posts")
+
+	}
+
 }

@@ -22,9 +22,21 @@ var todoCache map[int]models.Todo = make(map[int]models.Todo)
 // cached response already present in the cache.
 // If the id doesn't exist, it sends the requests for that id, gets the response and
 // stores inside the cache
-func InitMiddleWare(idParam int, requestType utils.Request) (models.Entity, error) {
+func InitMiddleWare(idParam int, requestType utils.Request, cachingEnabled bool) (models.Entity, error) {
 
 	if requestType == utils.Post {
+		if !cachingEnabled {
+			log.Printf("RETRIEVING POSTS ---> CACHING DISABLED :: Id: [%v] sending request", idParam)
+
+			posts, err := SendPostsRequest(idParam, utils.PostUrl)
+			if err != nil {
+				log.Printf("Error occured while getting posts: [%v}", err)
+				return models.Post{}, err
+			}
+			log.Printf("RETRIEVING POSTS ---> Id: [%v] retrieved data from request, storing in cache", idParam)
+
+			return posts, nil
+		}
 		// if the id already exist in cache
 		if _, ok := postCache[idParam]; ok {
 			log.Printf("RETRIEVING POSTS ---> Id: [%v] already present in cache, returning data from cache", idParam)
@@ -44,6 +56,18 @@ func InitMiddleWare(idParam int, requestType utils.Request) (models.Entity, erro
 
 		}
 	} else {
+		if !cachingEnabled {
+			log.Printf("RETRIEVING TODOS ---> CACHING DISABLED :: Id: [%v] sending request", idParam)
+
+			todos, err := SendTodosRequest(idParam, utils.TodoUrl)
+			if err != nil {
+				log.Printf("Error occured while getting todos: [%v}", err)
+				return models.Post{}, err
+			}
+			log.Printf("RETRIEVING TODOS ---> Id: [%v] retrieved data from request, storing in cache", idParam)
+
+			return todos, nil
+		}
 		if _, ok := todoCache[idParam]; ok {
 			log.Printf("RETRIEVING TODOS ---> Id: [%v] already present in cache, returning data from cache", idParam)
 			return todoCache[idParam], nil
