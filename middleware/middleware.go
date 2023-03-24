@@ -14,7 +14,7 @@ import (
 // PostCache stores the cached requests for all the posts
 var postCache map[int]models.Post = make(map[int]models.Post)
 
-// Todo Cache stores the cached requests for all the todos
+// TodoCache stores the cached requests for all the todos
 var todoCache map[int]models.Todo = make(map[int]models.Todo)
 
 // Everytime a request goes through the middleware, it will check if the id
@@ -23,70 +23,117 @@ var todoCache map[int]models.Todo = make(map[int]models.Todo)
 // If the id doesn't exist, it sends the requests for that id, gets the response and
 // stores inside the cache
 func InitMiddleWare(idParam int, requestType utils.Request, cachingEnabled bool) (models.Entity, error) {
-
-	if requestType == utils.Post {
+	switch requestType {
+	case utils.Post:
 		if !cachingEnabled {
-			log.Printf("RETRIEVING POSTS ---> CACHING DISABLED :: Id: [%v] sending request", idParam)
-
-			posts, err := SendPostsRequest(idParam, utils.PostUrl)
+			posts, err := HandlePostsRequestWhenCachingDisabled(idParam)
 			if err != nil {
-				log.Printf("Error occured while getting posts: [%v}", err)
+				log.Printf("Error occured while handling disabled caching for posts: [%v]", err)
 				return models.Post{}, err
 			}
-			log.Printf("RETRIEVING POSTS ---> Id: [%v] retrieved data from request, storing in cache", idParam)
-
 			return posts, nil
 		}
-		// if the id already exist in cache
+		// if the id already exist in postCache
 		if _, ok := postCache[idParam]; ok {
 			log.Printf("RETRIEVING POSTS ---> Id: [%v] already present in cache, returning data from cache", idParam)
 			return postCache[idParam], nil
 		} else {
-			log.Printf("RETRIEVING POSTS ---> Id: [%v] not present in cache, sending request", idParam)
-
-			posts, err := SendPostsRequest(idParam, utils.PostUrl)
+			posts, err := HandlePostsRequestForFirstTime(idParam)
 			if err != nil {
 				log.Printf("Error occured while getting posts: [%v}", err)
 				return models.Post{}, err
 			}
-			log.Printf("RETRIEVING POSTS ---> Id: [%v] retrieved data from request, storing in cache", idParam)
-
-			postCache[idParam] = posts
 			return posts, nil
 
 		}
-	} else {
+	case utils.Todo:
 		if !cachingEnabled {
-			log.Printf("RETRIEVING TODOS ---> CACHING DISABLED :: Id: [%v] sending request", idParam)
-
-			todos, err := SendTodosRequest(idParam, utils.TodoUrl)
+			todos, err := HandlePostsRequestWhenCachingDisabled(idParam)
 			if err != nil {
-				log.Printf("Error occured while getting todos: [%v}", err)
-				return models.Post{}, err
+				log.Printf("Error occured while handling disabled caching for todos: [%v]", err)
+				return models.Todo{}, err
 			}
-			log.Printf("RETRIEVING TODOS ---> Id: [%v] retrieved data from request, storing in cache", idParam)
-
 			return todos, nil
 		}
+
+		// if the id already exist in todoCache
 		if _, ok := todoCache[idParam]; ok {
 			log.Printf("RETRIEVING TODOS ---> Id: [%v] already present in cache, returning data from cache", idParam)
 			return todoCache[idParam], nil
 		} else {
-			log.Printf("RETRIEVING TODOS ---> Id: [%v] not present in cache, sending request", idParam)
-
-			todos, err := SendTodosRequest(idParam, utils.TodoUrl)
+			todos, err := HandleTodosRequestForFirstTime(idParam)
 			if err != nil {
 				log.Printf("Error occured while getting todos: [%v}", err)
-				return models.Post{}, err
+				return models.Todo{}, err
 			}
-			log.Printf("RETRIEVING TODOS ---> Id: [%v] retrieved data from request, storing in cache", idParam)
-
-			todoCache[idParam] = todos
 			return todos, nil
 		}
+	default:
+		return models.Post{}, nil
 	}
 }
 
+// When a particular id is requested for the first time and caching is not disabled, this function runs
+// for the posts, requests the data and stores in postCache
+func HandlePostsRequestForFirstTime(idParam int) (models.Post, error) {
+	log.Printf("RETRIEVING POSTS ---> Id: [%v] not present in cache, sending request", idParam)
+
+	posts, err := SendPostsRequest(idParam, utils.PostUrl)
+	if err != nil {
+		log.Printf("Error occured while getting posts: [%v}", err)
+		return models.Post{}, err
+	}
+	log.Printf("RETRIEVING POSTS ---> Id: [%v] retrieved data from request, storing in cache", idParam)
+
+	postCache[idParam] = posts
+	return posts, nil
+}
+
+// When a particular id is requested for the first time and caching is not disabled, this function runs
+// for the todos, requests the data and stores in todoCache
+func HandleTodosRequestForFirstTime(idParam int) (models.Todo, error) {
+	log.Printf("RETRIEVING TODOS ---> Id: [%v] not present in cache, sending request", idParam)
+
+	todos, err := SendTodosRequest(idParam, utils.TodoUrl)
+	if err != nil {
+		log.Printf("Error occured while getting todos: [%v}", err)
+		return models.Todo{}, err
+	}
+	log.Printf("RETRIEVING TODOS ---> Id: [%v] retrieved data from request, storing in cache", idParam)
+
+	todoCache[idParam] = todos
+	return todos, nil
+}
+
+// When caching is disabled, this directly requests the posts data and does not store in cache
+func HandlePostsRequestWhenCachingDisabled(idParam int) (models.Post, error) {
+	log.Printf("RETRIEVING POSTS ---> CACHING DISABLED :: Id: [%v] sending request", idParam)
+
+	posts, err := SendPostsRequest(idParam, utils.PostUrl)
+	if err != nil {
+		log.Printf("Error occured while getting posts: [%v}", err)
+		return models.Post{}, err
+	}
+	log.Printf("RETRIEVING POSTS ---> Id: [%v] retrieved data from request", idParam)
+
+	return posts, nil
+}
+
+// When caching is disabled, this directly requests the todos data and does not store in cache
+func HandleTodosRequestWhenCachingDisabled(idParam int) (models.Todo, error) {
+	log.Printf("RETRIEVING TODOS ---> CACHING DISABLED :: Id: [%v] sending request", idParam)
+
+	todos, err := SendTodosRequest(idParam, utils.TodoUrl)
+	if err != nil {
+		log.Printf("Error occured while getting todos: [%v}", err)
+		return models.Todo{}, err
+	}
+	log.Printf("RETRIEVING TODOS ---> Id: [%v] retrieved data from request", idParam)
+
+	return todos, nil
+}
+
+// Sends and retrieves the new requests for posts
 func SendPostsRequest(idParam int, requestUrl string) (models.Post, error) {
 	url := fmt.Sprintf(requestUrl+"%d", idParam)
 	response, err := http.Get(url)
@@ -111,6 +158,7 @@ func SendPostsRequest(idParam int, requestUrl string) (models.Post, error) {
 	return post, nil
 }
 
+// Sends and retrives the new request for todos
 func SendTodosRequest(idParam int, requestUrl string) (models.Todo, error) {
 	url := fmt.Sprintf(requestUrl+"%d", idParam)
 	response, err := http.Get(url)

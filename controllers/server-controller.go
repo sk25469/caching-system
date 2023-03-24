@@ -9,9 +9,13 @@ import (
 	"github.com/sk25469/momoney-backend-assignment/utils"
 )
 
+// Toggles caching for todos
 var cachingEnabledForTodos = true
+
+// Toggles caching for posts
 var cachingEnabledForPosts = true
 
+// Fetches a todo with given id
 func GetTodos(ctx *fiber.Ctx) error {
 	idParam := ctx.Params("id")
 	todoId, err := strconv.Atoi(idParam)
@@ -29,6 +33,7 @@ func GetTodos(ctx *fiber.Ctx) error {
 	return ctx.Status(200).JSON(response)
 }
 
+// Toggles caching for todos
 func ToggleCachingForTodos(ctx *fiber.Ctx) error {
 	flagParam := ctx.Params("flag")
 	log.Printf("Successfully parsed flag: [%v]", flagParam)
@@ -41,6 +46,7 @@ func ToggleCachingForTodos(ctx *fiber.Ctx) error {
 	}
 }
 
+// Fetches post for a given id
 func GetPosts(ctx *fiber.Ctx) error {
 	idParam := ctx.Params("id")
 	postId, err := strconv.Atoi(idParam)
@@ -57,6 +63,7 @@ func GetPosts(ctx *fiber.Ctx) error {
 	return ctx.Status(200).JSON(response)
 }
 
+// Toggles caching for posts
 func ToggleCachingForPosts(ctx *fiber.Ctx) error {
 	flagParam := ctx.Params("flag")
 	if flagParam == "true" {
