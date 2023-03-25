@@ -10,15 +10,17 @@ This project provides an API for retrieving posts and todos from a database. It 
 
 ### Installation
 
+To run the server locally -
+
 * Clone this repository to your local machine.
 * Run `go mod download` to download the project dependencies.
 * Run `go run main.go` to start the server.
 
-By default, the server will run on port 3000.
+By default, the local server will run on port 3000.
 
 ### Usage
 
-* Access the API at <http://20.207.85.42:3000>.
+* Access the deployed API at <http://20.207.85.42:3000>.
 * Use the available routes to interact with the API.
 
 ### API
@@ -37,9 +39,9 @@ By default, the server will run on port 3000.
 * `:flag` can be set to `true` or `false` to toggle caching on or off.
 * `:id` is an integer
 
-### Local Testing
+### Testing
 
-To test the API on a local machine, run the server with `go run main.go` then go to the test directory. There are multiple configurations available:
+To test the API using CLI, run the server with `go run main.go` then go to the test directory. There are multiple configurations available:
 
 * To retrieve a post or todo, use the following command:
 
@@ -52,4 +54,4 @@ Replace `id-of-request` with the ID of the post or todo you want to retrieve and
 
 `go run server-test.go -caching=<flag> -path=<path-to-toggle>`
 
-Replace `flag` with either true or false, depending on whether you want to enable or disable caching, and replace `path-to-toggle` with either `posts`, `todos`, or `all`, depending on which routes you want to toggle caching for.
+Replace `flag` with either `true` or `false`, depending on whether you want to enable or disable caching, and replace `path-to-toggle` with either `posts`, `todos`, or `all`, depending on which routes you want to toggle caching for.
