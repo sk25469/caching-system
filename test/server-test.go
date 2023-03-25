@@ -14,7 +14,7 @@ import (
 // const baseUrl = "http://localhost:3000"
 
 // Use this url when testing from deployment
-const baseUrl = "http://20.207.85.42:3000"
+const baseUrl = "http://20.219.233.238:3000"
 
 func main() {
 	// id gives the id for todos or posts
