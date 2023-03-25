@@ -9,7 +9,10 @@ import (
 )
 
 // Uncomment this line when testing locally
-const baseUrl = "http://localhost:3000"
+// const baseUrl = "http://localhost:3000"
+
+// Use this url when testing from deployment
+const baseUrl = "http://20.207.85.42:3000"
 
 func main() {
 	// id, path, caching
