@@ -9,7 +9,7 @@ import (
 
 // This function registers the 2 GET requests routes for [posts] and [todos]
 // and 2 GET requests for toggling caching in todos and posts
-func RegisterRoutes() {
+func RegisterRoutes(port string) {
 	app := fiber.New()
 
 	app.Get("/posts/:id", controllers.GetPosts)
@@ -18,5 +18,6 @@ func RegisterRoutes() {
 	app.Get("/caching/todos=:flag", controllers.ToggleCachingForTodos)
 	app.Get("/caching=:flag", controllers.ToggleCachingForAll)
 
-	log.Fatal(app.Listen(":3000"))
+	log.Printf("🚀Server started at post: [%v]", port)
+	log.Fatal(app.Listen(port))
 }
