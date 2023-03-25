@@ -16,6 +16,7 @@ func RegisterRoutes() {
 	app.Get("/todos/:id", controllers.GetTodos)
 	app.Get("/caching/posts=:flag", controllers.ToggleCachingForPosts)
 	app.Get("/caching/todos=:flag", controllers.ToggleCachingForTodos)
+	app.Get("/caching=:flag", controllers.ToggleCachingForAll)
 
 	log.Fatal(app.Listen(":3000"))
 }

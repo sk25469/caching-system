@@ -76,3 +76,18 @@ func ToggleCachingForPosts(ctx *fiber.Ctx) error {
 	}
 
 }
+
+// Toggles caching for both posts and todos
+func ToggleCachingForAll(ctx *fiber.Ctx) error {
+	flagParam := ctx.Params("flag")
+	if flagParam == "true" {
+		cachingEnabledForPosts = true
+		cachingEnabledForTodos = true
+		return ctx.Status(200).JSON("Caching enabled for all routes")
+	} else {
+		cachingEnabledForPosts = false
+		cachingEnabledForTodos = false
+		return ctx.Status(200).JSON("Caching disabled for all routes")
+	}
+
+}
