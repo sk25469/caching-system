@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-// Uncomment this line when testing locally
+// Uncomment this line when testing from local server
 // const baseUrl = "http://localhost:3000"
 
 // Use this url when testing from deployment

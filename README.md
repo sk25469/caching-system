@@ -41,7 +41,7 @@ By default, the local server will run on port 3000.
 
 ### Testing
 
-To test the API using CLI, run the server with `go run main.go` then go to the test directory. There are multiple configurations available:
+To test the API using CLI, go to the test directory. There are multiple testing configurations available:
 
 * To retrieve a post or todo, use the following command:
 
