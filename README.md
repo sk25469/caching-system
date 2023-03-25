@@ -23,7 +23,8 @@ By default, the server will run on port 3000.
 
 ### API
 
-* The API is hosted on Azure Container Instance and can be accessed using the base URL <http://20.207.85.42:3000>. The following routes are available:
+* The API is hosted on Azure Container Instance and can be accessed using the base URL <http://20.207.85.42:3000>.
+* The following routes are available:
 
 | Endpoint        | Methods           | Description  |
 | --------------- |:-----------------:| ------------:|
@@ -50,4 +51,5 @@ Replace `id-of-request` with the ID of the post or todo you want to retrieve and
 * To toggle caching for a particular route, use the following command:
 
 `go run server-test.go -caching=<flag> -path=<path-to-toggle>`
+
 Replace `flag` with either true or false, depending on whether you want to enable or disable caching, and replace `path-to-toggle` with either `posts`, `todos`, or `all`, depending on which routes you want to toggle caching for.
