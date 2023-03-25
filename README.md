@@ -50,8 +50,16 @@ To test the API using CLI, go to the test directory. There are multiple testing 
 Replace `id-of-request` with the ID of the post or todo you want to retrieve and
 `path-to-request` with either posts or todos.
 
+For example, to get todo with id = 1:
+
+`go run server-test.go -id=1 -path=todos`
+
 * To toggle caching for a particular route, use the following command:
 
 `go run server-test.go -caching=<flag> -path=<path-to-toggle>`
+
+For example, to disable caching for all routes:
+
+`go run server-test.go -caching=false -path=all`
 
 Replace `flag` with either `true` or `false`, depending on whether you want to enable or disable caching, and replace `path-to-toggle` with either `posts`, `todos`, or `all`, depending on which routes you want to toggle caching for.
