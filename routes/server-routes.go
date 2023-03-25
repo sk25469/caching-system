@@ -19,5 +19,5 @@ func RegisterRoutes(port string) {
 	app.Get("/caching=:flag", controllers.ToggleCachingForAll)
 
 	log.Printf("🚀Server started at post: [%v]", port)
-	log.Fatal(app.Listen(port))
+	log.Fatal(app.Listen(":" + port))
 }
