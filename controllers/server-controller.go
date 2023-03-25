@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"log"
+	"net/http"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
@@ -21,28 +22,31 @@ func GetTodos(ctx *fiber.Ctx) error {
 	todoId, err := strconv.Atoi(idParam)
 	if err != nil {
 		log.Printf("Error in parsing Todo id: [%v]", err)
-		return ctx.Status(500).SendString(err.Error())
+		return ctx.Status(http.StatusInternalServerError).JSON(err.Error())
 	}
 	log.Printf("Successfully parsed id: [%v]", todoId)
 
 	response, err := middleware.InitMiddleWare(todoId, utils.Todo, cachingEnabledForTodos)
 	if err != nil {
 		log.Printf("Error occured in middleware: [%v]", err)
-		return ctx.Status(500).SendString(err.Error())
+		return ctx.Status(http.StatusInternalServerError).JSON(err.Error())
 	}
-	return ctx.Status(200).JSON(response)
+	return ctx.Status(http.StatusOK).JSON(response)
 }
 
 // Toggles caching for todos
 func ToggleCachingForTodos(ctx *fiber.Ctx) error {
 	flagParam := ctx.Params("flag")
-	log.Printf("Successfully parsed flag: [%v]", flagParam)
+	if err := utils.CheckTypeAndValues(flagParam, "string", []string{"true", "false"}); err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(err.Error())
+	}
+	log.Printf("Successfully parsed flag for todos: [%v]", flagParam)
 	if flagParam == "true" {
 		cachingEnabledForTodos = true
-		return ctx.Status(200).JSON("Caching enabled for todos")
+		return ctx.Status(http.StatusOK).JSON("Caching enabled for todos")
 	} else {
 		cachingEnabledForTodos = false
-		return ctx.Status(200).JSON("Caching disabled for todos")
+		return ctx.Status(http.StatusOK).JSON("Caching disabled for todos")
 	}
 }
 
@@ -52,26 +56,31 @@ func GetPosts(ctx *fiber.Ctx) error {
 	postId, err := strconv.Atoi(idParam)
 	if err != nil {
 		log.Printf("Error in parsing Post id: [%v]", err)
-		return ctx.Status(500).SendString(err.Error())
+		return ctx.Status(http.StatusInternalServerError).JSON(err.Error())
 	}
 	log.Printf("Successfully parsed id: [%v]", postId)
 	response, err := middleware.InitMiddleWare(postId, utils.Post, cachingEnabledForPosts)
 	if err != nil {
 		log.Printf("Error occured in middleware: [%v]", err)
-		return ctx.Status(500).SendString(err.Error())
+		return ctx.Status(http.StatusInternalServerError).JSON(err.Error())
 	}
-	return ctx.Status(200).JSON(response)
+	return ctx.Status(http.StatusOK).JSON(response)
 }
 
 // Toggles caching for posts
 func ToggleCachingForPosts(ctx *fiber.Ctx) error {
 	flagParam := ctx.Params("flag")
+	if err := utils.CheckTypeAndValues(flagParam, "string", []string{"true", "false"}); err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(err.Error())
+	}
+	log.Printf("Successfully parsed flag for todos: [%v]", flagParam)
+
 	if flagParam == "true" {
 		cachingEnabledForPosts = true
-		return ctx.Status(200).JSON("Caching enabled for posts")
+		return ctx.Status(http.StatusOK).JSON("Caching enabled for posts")
 	} else {
 		cachingEnabledForPosts = false
-		return ctx.Status(200).JSON("Caching disabled for posts")
+		return ctx.Status(http.StatusOK).JSON("Caching disabled for posts")
 
 	}
 
@@ -80,14 +89,18 @@ func ToggleCachingForPosts(ctx *fiber.Ctx) error {
 // Toggles caching for both posts and todos
 func ToggleCachingForAll(ctx *fiber.Ctx) error {
 	flagParam := ctx.Params("flag")
+	if err := utils.CheckTypeAndValues(flagParam, "string", []string{"true", "false"}); err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(err.Error())
+	}
+	log.Printf("Successfully parsed flag for all routes: [%v]", flagParam)
 	if flagParam == "true" {
 		cachingEnabledForPosts = true
 		cachingEnabledForTodos = true
-		return ctx.Status(200).JSON("Caching enabled for all routes")
+		return ctx.Status(http.StatusOK).JSON("Caching enabled for all routes")
 	} else {
 		cachingEnabledForPosts = false
 		cachingEnabledForTodos = false
-		return ctx.Status(200).JSON("Caching disabled for all routes")
+		return ctx.Status(http.StatusOK).JSON("Caching disabled for all routes")
 	}
 
 }
