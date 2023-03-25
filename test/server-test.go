@@ -33,19 +33,21 @@ func main() {
 			url = fmt.Sprintf(baseUrl+"/caching/posts=%v", *caching)
 		} else if *path == "todos" {
 			url = fmt.Sprintf(baseUrl+"/caching/todos=%v", *caching)
+		} else if *path == "all" {
+			url = fmt.Sprintf(baseUrl+"/caching=%v", *caching)
 		}
 	}
 
 	response, err := http.Get(url)
 	if err != nil {
-		log.Fatal("Failed to fetch data from API: [%v]\n", err)
+		log.Fatal("Failed to fetch data from API: " + err.Error())
 		return
 	}
 
 	defer response.Body.Close()
 	body, err := ioutil.ReadAll(response.Body)
 	if err != nil {
-		log.Fatal("Failed to read response body: %v\n", err)
+		log.Fatal("Failed to read response body: ", err.Error())
 		return
 	}
 
