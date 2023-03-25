@@ -20,12 +20,12 @@ By default, the local server will run on port 3000.
 
 ### Usage
 
-* Access the deployed API at <http://20.207.85.42:3000>.
+* Access the deployed API at <http://20.219.233.238:3000>.
 * Use the available routes to interact with the API.
 
 ### API
 
-* The API is hosted on Azure Container Instance and can be accessed using the base URL <http://20.207.85.42:3000>.
+* The API is hosted on Azure Container Instance and can be accessed using the base URL <http://20.219.233.238:3000>.
 * The following routes are available:
 
 | Endpoint        | Methods           | Description  |
