@@ -56,7 +56,7 @@ func main() {
 		} else if *path == "todos" {
 			url = fmt.Sprintf(baseUrl+"/todos/%d", *id)
 		} else {
-			log.Fatal("can't use all tag with caching tag")
+			log.Fatal("can't use all tag without caching tag")
 			return
 		}
 
