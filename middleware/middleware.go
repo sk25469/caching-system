@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"sync"
 
 	"github.com/sk25469/momoney-backend-assignment/models"
 	"github.com/sk25469/momoney-backend-assignment/utils"
@@ -14,12 +15,16 @@ import (
 // PostCache stores the cached requests for all the posts
 var cache map[int]interface{} = make(map[int]interface{})
 
+var mut sync.Mutex
+
 // Everytime a request goes through the middleware, it will check if the id
 // already exist in their respective todos, if they exist, then it returns the
 // cached response already present in the cache.
 // If the id doesn't exist, it sends the requests for that id, gets the response and
 // stores inside the cache
 func InitMiddleWare(idParam int, requestType utils.Request, cachingEnabled bool) (interface{}, error) {
+	mut.Lock()
+	defer mut.Unlock()
 
 	var logVal string
 	if requestType == utils.Post {
